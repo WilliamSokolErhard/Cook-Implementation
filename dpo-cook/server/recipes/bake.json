@@ -1,0 +1,208 @@
+{
+    "id": "2fe782ca-93c4-4269-a06a-c764ad87558b",
+    "name": "bake",
+    "description": "Bake diffuse, occlusion, normal maps",
+    "version": "1",
+    "start": "inspect-unwrapped",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "highPolyMeshFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "highPolyDiffuseMapFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "lowPolyUnwrappedMeshFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "baseName": {
+                "type": "string",
+                "minLength": 1
+            },
+            "numFaces": {
+                "type": "integer",
+                "minimum": 10000,
+                "multipleOf": 1000,
+                "default": 250000
+            },
+            "mapSize": {
+                "type": "integer",
+                "minimum": 128,
+                "maximum": 8192,
+                "default": 4096
+            },
+            "bakeOcclusion": {
+                "type": "boolean",
+                "default": true
+            },
+            "bakeNormals": {
+                "type": "boolean",
+                "default": true
+            },
+            "bakeTest": {
+                "type": "boolean",
+                "default": false
+            },
+            "maxRayDistance": {
+                "type": "number",
+                "default": 0
+            },
+            "occlusionRays": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 512,
+                "default": 128
+            },
+            "diffuseMapQuality": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "default": 89
+            },
+            "occlusionMapQuality": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "default": 69
+            },
+            "normalMapQuality": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "default": 79
+            },
+            "tangentSpaceNormals": {
+                "type": "boolean",
+                "default": true
+            }
+        },
+        "required": [
+            "highPolyMeshFile",
+            "lowPolyUnwrappedMeshFile"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "inspect-unwrapped": {
+            "task": "InspectMesh",
+            "description": "Calculate mesh size and max. ray distance for bake",
+            "skip": "maxRayDistance > 0",
+            "parameters": {
+                "meshFile": "lowPolyUnwrappedMeshFile",
+                "tool": "'MeshSmith'"
+            },
+            "post": {
+                "autoRayDistance": "$min($result.inspection.scene.geometry.size) * 0.01"
+            },
+            "success": "'bake'",
+            "failure": "$failure"
+        },
+        "bake": {
+            "task": "BakeMaps",
+            "description": "Bake diffuse, normal and occlusion maps using xNormal",
+            "pre": {
+                "baseName": "$baseName($firstTrue(baseName, highPolyMeshFile))",
+                "baseMeshName": "$baseMeshName(highPolyMeshFile, numFaces)",
+                "baseMeshMapName": "$baseMeshMapName(highPolyMeshFile, numFaces, mapSize)",
+                "bakeDiffuse": "$exists(highPolyDiffuseMapFile)",
+                "mapBaseName": "baseMeshMapName & '.png'"
+            },
+            "parameters": {
+                "highPolyMeshFile": "highPolyMeshFile",
+                "highPolyDiffuseMapFile": "highPolyDiffuseMapFile",
+                "lowPolyUnwrappedMeshFile": "lowPolyUnwrappedMeshFile",
+                "mapBaseName": "mapBaseName",
+                "mapSize": "mapSize",
+                "maxRayDistance": "maxRayDistance > 0 ? maxRayDistance : autoRayDistance",
+                "bakeDiffuse": "bakeDiffuse",
+                "bakeOcclusion": "bakeOcclusion",
+                "bakeNormals": "bakeNormals",
+                "bakeTest": "bakeTest",
+                "occlusionRays": "occlusionRays",
+                "tangentSpaceNormals": "tangentSpaceNormals",
+                "timeout": 1200
+            },
+            "post": {
+                "deliverables": {
+                    "diffuseMapMaster": "bakeDiffuse ? (baseMeshMapName & '-diffuse.png') : ''",
+                    "occlusionMapMaster": "bakeOcclusion ? (baseMeshMapName & '-occlusion.png') : ''",
+                    "normalMapMaster": "bakeNormals ? (baseMeshMapName & '-normals.png') : ''",
+                    "testMap": "bakeTest ? (baseMeshMapName & '-test.png') : ''"
+                }
+            },
+            "success": "'convert-diffuse-map'",
+            "failure": "$failure"
+        },
+        "convert-diffuse-map": {
+            "task": "ConvertImage",
+            "description": "Convert Diffuse Map",
+            "skip": "$not(bakeDiffuse)",
+            "pre": {
+                "deliverables": {
+                    "diffuseMap": "baseMeshMapName & '-diffuse.jpg'"
+                }
+            },
+            "parameters": {
+                "inputImageFile": "deliverables.diffuseMapMaster",
+                "outputImageFile": "deliverables.diffuseMap",
+                "quality": "diffuseMapQuality"
+            },
+            "success": "'convert-occlusion-map'",
+            "failure": "$failure"
+        },
+        "convert-occlusion-map": {
+            "task": "ConvertImage",
+            "description": "Convert Occlusion Map",
+            "skip": "$not(bakeOcclusion)",
+            "pre": {
+                "deliverables": {
+                    "occlusionMap": "baseMeshMapName & '-occlusion.jpg'"
+                }
+            },
+            "parameters": {
+                "inputImageFile": "deliverables.occlusionMapMaster",
+                "outputImageFile": "deliverables.occlusionMap",
+                "quality": "occlusionMapQuality"
+            },
+            "success": "'convert-normal-map'",
+            "failure": "$failure"
+        },
+        "convert-normal-map": {
+            "task": "ConvertImage",
+            "description": "Convert Normal Map",
+            "skip": "$not(bakeNormals)",
+            "pre": {
+                "deliverables": {
+                    "normalMap": "baseMeshMapName & '-normals.jpg'"
+                }
+            },
+            "parameters": {
+                "inputImageFile": "deliverables.normalMapMaster",
+                "outputImageFile": "deliverables.normalMap",
+                "quality": "normalMapQuality"
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "parameters": {
+                "method": "none",
+                "path": "$currentDir",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}

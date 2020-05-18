@@ -1,0 +1,101 @@
+{
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "template",
+    "description": "Recipe Template",
+    "version": "1",
+    "start": "log",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "someFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "pickupPath": {
+                "type": "string",
+                "minLength": 1
+            },
+            "deliveryPath": {
+                "type": "string",
+                "minLength": 1
+            },
+            "transportMethod": {
+                "type": "string",
+                "enum": [ "none", "local" ],
+                "default": "none"
+            },
+            "baseName": {
+                "type": "string",
+                "minLength": 1
+            }
+        },
+        "required": [
+            "someFile"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "log": {
+            "task": "Log",
+            "description": "Enable logging services",
+            "pre": {
+                "baseName": "$baseName($firstTrue(baseName, someFile))"
+            },
+            "parameters": {
+                "logToConsole": true,
+                "reportFile": "baseName & 'some-report.json'"
+            },
+            "success": "'pickup'",
+            "failure": "$failure"
+        },
+        "pickup": {
+            "task": "Pickup",
+            "description": "Fetch input files from client",
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(pickupPath, $currentDir)",
+                "files": {
+                    "someFile": "someFile"
+                }
+            },
+            "success": "'process'",
+            "failure": "$failure"
+        },
+        "process": {
+            "task": "Dummy",
+            "description": "Dummy Task",
+            "pre": {
+                "deliverables": {
+                    "this": "that.file"
+                }
+            },
+            "parameters": {
+                "outcome": "success",
+                "duration": 1
+            },
+            "post": {
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "pre": {
+                "deliverables": {
+                    "someFile": "someFile"
+                }
+            },
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(deliveryPath, pickupPath, $currentDir)",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}

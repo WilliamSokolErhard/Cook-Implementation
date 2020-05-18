@@ -1,0 +1,102 @@
+{
+    "name": "dpo-cook",
+    "version": "1.0.0",
+    "description": "Smithsonian DPO Cook - 3D Model/Geometry/Texture Processing Service",
+    "scripts": {
+        "start": "pm2 start server/bin/index.js --name cook",
+        "stop": "pm2 delete cook",
+        "monitor": "pm2 monit",
+        "server": "node server/bin/index.js",
+        "watch": "npm run build & concurrently \"cd source/client && webpack --watch\" \"tsc -b source/server -w\" \"nodemon server/bin/index.js\"",
+        "build": "concurrently \"npm run build-server\" \"npm run build-client\"",
+        "build-client": "cd source/client && webpack && cd ../..",
+        "build-server": "tsc -b source/server",
+        "build-libs": "tsc -b libs",
+        "doc": "typedoc --name \"Smithsonian Cook\" --exclude \"**/node_modules/**\" --ignoreCompilerErrors --mode file --target ES6 --theme minimal --out doc/source/ source/",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "nodemonConfig": {
+        "delay": "500",
+        "watch": [
+            "server/bin",
+            "server/recipes",
+            "node_modules/@ff"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Smithsonian/dpo-cook.git"
+    },
+    "contributors": [
+        {
+            "name": "Ralph Wiedemeier",
+            "url": "https://github.com/framelab"
+        }
+    ],
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/Smithsonian/dpo-cook.git/issues"
+    },
+    "homepage": "https://github.com/Smithsonian/dpo-cook.git#readme",
+    "dependencies": {
+        "ajv": "^6.12.2",
+        "body-parser": "^1.19.0",
+        "clone-deep": "^4.0.1",
+        "cookie-parser": "^1.4.5",
+        "deep-equal": "^2.0.3",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-session": "^1.17.1",
+        "filenamify": "^4.1.0",
+        "htmlparser2": "^4.1.0",
+        "jsonata": "^1.8.3",
+        "minimist": "^1.2.5",
+        "moment": "^2.24.0",
+        "morgan": "^1.10.0",
+        "node-fetch": "^2.6.0",
+        "os-utils": "^0.0.14",
+        "react-json-tree": "^0.11.2",
+        "reactable": "^1.1.0",
+        "rimraf": "^3.0.2",
+        "socket.io": "^2.3.0",
+        "webdav-server": "^2.6.2"
+    },
+    "devDependencies": {
+        "@types/body-parser": "^1.19.0",
+        "@types/chai": "^4.2.11",
+        "@types/express": "^4.17.6",
+        "@types/express-session": "^1.17.0",
+        "@types/json-schema": "^7.0.4",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^13.13.4",
+        "@types/react": "^16.9.34",
+        "@types/reactable": "^0.14.6",
+        "@types/socket.io": "^2.1.4",
+        "apidoc": "^0.22.0",
+        "awesome-typescript-loader": "^5.2.1",
+        "chai": "^4.2.0",
+        "comment-json": "^3.0.2",
+        "concurrently": "^5.2.0",
+        "css-loader": "^3.5.3",
+        "express-handlebars": "^4.0.4",
+        "fs-extra": "^9.0.0",
+        "highlight.js": "^10.0.1",
+        "markdown-table": "^2.0.0",
+        "mini-css-extract-plugin": "^0.9.0",
+        "mkdirp": "^0.5.5",
+        "mocha": "^7.1.2",
+        "node-sass": "^4.14.0",
+        "nodemon": "^2.0.3",
+        "pm2": "^4.4.0",
+        "react": "^16.13.1",
+        "react-dom": "^16.13.1",
+        "sass-loader": "^8.0.2",
+        "source-map-loader": "^0.2.4",
+        "three": "^0.110.0",
+        "typedoc": "^0.17.6",
+        "typescript": "^3.8.3",
+        "webdav": "^3.3.0",
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11"
+    }
+}

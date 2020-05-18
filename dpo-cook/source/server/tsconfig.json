@@ -1,0 +1,17 @@
+{
+    "references": [
+        { "path": "../../libs" },
+        { "path": "../common" }
+    ],
+    "compilerOptions": {
+        "target": "ES2016",
+        "module": "commonjs",
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "outDir": "../../server/bin",
+        "baseUrl": "../../server/bin/node_modules"
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

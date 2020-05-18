@@ -1,0 +1,76 @@
+{
+    "id": "ee77ee05-d832-4729-9914-18a96939f205",
+    "name": "inspect-mesh",
+    "description": "Inspects a mesh and returns a report with results",
+    "version": "2",
+    "start": "log",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "meshFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "inspectionTool": {
+                "type": "string",
+                "enum": [
+                    "Meshlab",
+                    "MeshSmith"
+                ],
+                "default": "Meshlab"
+            }
+        },
+        "required": [
+            "meshFile"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "log": {
+            "task": "Log",
+            "pre": {
+                "baseName": "$baseName(meshFile)"
+            },
+            "parameters": {
+                "logToConsole": true,
+                "logFile": "baseName & '-log.txt'",
+                "reportFile": "baseName & '-report.json'"
+            },
+            "success": "'inspect'",
+            "failure": "$failure"
+        },
+        "inspect": {
+            "task": "InspectMesh",
+            "description": "Validate mesh and inspect topology",
+            "pre": {
+                "deliverables": {
+                    "inspectionReport": "baseName & '-inspection.json'"
+                }
+            },
+            "parameters": {
+                "meshFile": "meshFile",
+                "reportFile": "deliverables.inspectionReport",
+                "tool": "inspectionTool"
+            },
+            "post": {
+                "maxRayDistance": "$max($result.inspection.scene.geometry.size) * 0.01"
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "parameters": {
+                "method": "none",
+                "path": "$currentDir",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}

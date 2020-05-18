@@ -1,0 +1,97 @@
+{
+    "id": "8a2e8556-3c39-48a2-b432-591f480b7d69",
+    "name": "migrate-play",
+    "description": "Converts a Play Box to a Voyager Scene Document",
+    "version": "3",
+    "start": "log",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "boxId": {
+                "type": "integer"
+            },
+            "annotationStyle": {
+                "type": "string",
+                "enum": [ "Standard", "Extended", "Circle" ],
+                "default": "Circle"
+            },
+            "migrateAnnotationColor": {
+                "type": "boolean",
+                "default": false
+            },
+            "createReadingSteps": {
+                "type": "boolean",
+                "default": false
+            },
+            "edanEntry": {
+                "type": "string"
+            },
+            "drupalBaseUrl": {
+                "type": "string",
+                "default": "https://3d.si.edu"
+            },
+            "payloadBaseUrl": {
+                "type": "string",
+                "default": "https://3d.si.edu/sites/default/files/box_payloads"
+            },
+            "cdnBaseUrl": {
+                "type": "string",
+                "default": "https://d39fxlie76wg71.cloudfront.net"
+            }
+        },
+        "required": [
+            "boxId"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "log": {
+            "task": "Log",
+            "pre": {
+                "baseName": "baseName ? baseName & '-' : ''"
+            },
+            "parameters": {
+                "logToConsole": true,
+                "logFile": "baseName & 'log.txt'",
+                "reportFile": "baseName & 'report.json'"
+            },
+            "success": "'migrate'",
+            "failure": "$failure"
+        },
+        "migrate": {
+            "task": "MigratePlay",
+            "pre": {
+                "deliverables": {
+                }
+            },
+            "parameters": {
+                "boxId": "boxId",
+                "annotationStyle": "annotationStyle",
+                "migrateAnnotationColor": "migrateAnnotationColor",
+                "createReadingSteps": "createReadingSteps",
+                "edanEntry": "edanEntry",
+                "drupalBaseUrl": "drupalBaseUrl",
+                "payloadBaseUrl": "payloadBaseUrl",
+                "cdnBaseUrl": "cdnBaseUrl"
+            },
+            "post": {
+                "deliverables": "$result.files"
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "parameters": {
+                "method": "none",
+                "path": "$currentDir",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}

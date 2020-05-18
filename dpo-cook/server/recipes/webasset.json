@@ -1,0 +1,225 @@
+{
+    "id": "5490a618-4ebd-4763-a96a-abb9062c786b",
+    "name": "webasset",
+    "description": "Create glTF web asset",
+    "version": "4",
+    "start": "pickup",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "meshFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "diffuseMapFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "occlusionMapFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "emissiveMapFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "metallicRoughnessMapFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "normalMapFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "zoneMapFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "documentFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "metaDataFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "baseName": {
+                "type": "string",
+                "minLength": 1
+            },
+            "modelIndex": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0
+            },
+            "assetQuality": {
+                "type": "string",
+                "minLength": 1,
+                "default": "Thumb"
+            },
+            "units": {
+                "type": "string",
+                "enum": [ "mm", "cm", "m", "in", "ft", "yd" ],
+                "default": "cm"
+            },
+            "alignCenter": {
+                "type": "boolean",
+                "default": false
+            },
+            "alignFloor": {
+                "type": "boolean",
+                "default": false
+            },
+            "tangentSpaceNormals": {
+                "type": "boolean",
+                "default": true
+            },
+            "generateBinary": {
+                "type": "boolean",
+                "default": true
+            },
+            "generateGltf": {
+                "type": "boolean",
+                "default": true
+            },
+            "useCompression": {
+                "type": "boolean",
+                "default": true
+            }
+        },
+        "required": [
+            "meshFile"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "pickup": {
+            "task": "Pickup",
+            "description": "Fetch input files from client",
+            "pre": {
+                "baseName": "$baseName($firstTrue(baseName, meshFile))"
+            },
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(pickupPath, $currentDir)",
+                "files": {
+                    "meshFile": "meshFile",
+                    "diffuseMapFile": "diffuseMapFile",
+                    "occlusionMapFile": "occlusionMapFile",
+                    "emissiveMapFile": "emissiveMapFile",
+                    "metallicRoughnessMapFile": "metallicRoughnessMapFile",
+                    "normalMapFile": "normalMapFile",
+                    "zoneMapFile": "zoneMapFile",
+                    "documentFile": "documentFile",
+                    "metaDataFile": "metaDataFile"
+                }
+            },
+            "success": "'web-asset-glb'",
+            "failure": "$failure"
+        },
+        "web-asset-glb": {
+            "task": "WebAsset",
+            "description": "Create binary, compressed, embedded glTF asset",
+            "skip": "$not(generateBinary)",
+            "pre": {
+                "deliverables": {
+                    "webAssetGlb": "baseName & '-web.glb'"
+                }
+            },
+            "parameters": {
+                "outputFile": "deliverables.webAssetGlb",
+                "meshFile": "meshFile",
+                "diffuseMapFile": "diffuseMapFile",
+                "occlusionMapFile": "occlusionMapFile",
+                "emissiveMapFile": "emissiveMapFile",
+                "metallicRoughnessMapFile": "metallicRoughnessMapFile",
+                "normalMapFile": "normalMapFile",
+                "zoneMapFile": "zoneMapFile",
+                "alignCenter": "alignCenter",
+                "alignFloor": "alignFloor",
+                "objectSpaceNormals": "$not(tangentSpaceNormals)",
+                "useCompression": "useCompression",
+                "compressionLevel": 10,
+                "embedMaps": true,
+                "writeBinary": true
+            },
+            "success": "'web-asset-gltf'",
+            "failure": "$failure"
+
+        },
+        "web-asset-gltf": {
+            "task": "WebAsset",
+            "description": "Create glTF asset",
+            "skip": "$not(generateGltf)",
+            "pre": {
+                "deliverables": {
+                    "webAssetGltf": "baseName & '-web.gltf'",
+                    "webAssetBin": "baseName & '-web.bin'"
+                }
+            },
+            "parameters": {
+                "outputFile": "deliverables.webAssetGltf",
+                "meshFile": "meshFile",
+                "diffuseMapFile": "diffuseMapFile",
+                "occlusionMapFile": "occlusionMapFile",
+                "emissiveMapFile": "emissiveMapFile",
+                "metallicRoughnessMapFile": "metallicRoughnessMapFile",
+                "normalMapFile": "normalMapFile",
+                "zoneMapFile": "zoneMapFile",
+                "alignCenter": "alignCenter",
+                "alignFloor": "alignFloor",
+                "objectSpaceNormals": "$not(tangentSpaceNormals)",
+                "useCompression": false,
+                "compressionLevel": 10,
+                "embedMaps": false,
+                "writeBinary": false
+            },
+            "success": "'update-document'",
+            "failure": "$failure"
+        },
+        "update-document": {
+            "task": "Document",
+            "description": "Add web model to document.json descriptor file",
+            "pre": {
+                "deliverables": {
+                    "document": "$firstTrue(documentFile, 'scene.svx.json')"
+                }
+            },
+            "parameters": {
+                "documentFile": "deliverables.document",
+                "metaDataFile": "metaDataFile",
+                "modelIndex": "modelIndex",
+                "modelName": "baseName",
+                "units": "units",
+                "derivativeQuality": "assetQuality",
+                "modelFile": "$firstTrue(deliverables.webAssetGlb, deliverables.webAssetGltf)",
+                "numFaces": "numFaces",
+                "mapSize": "mapSize"
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(deliveryPath, pickupPath, $currentDir)",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}

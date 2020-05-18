@@ -1,0 +1,369 @@
+/**
+ * 3D Foundation Project
+ * Copyright 2019 Smithsonian Institution
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * FF Typescript Foundation Library
+ * Copyright 2018 Ralph Wiedemeier, Frame Factory GmbH
+ *
+ * License: MIT
+ */
+.ff-fullsize {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0; }
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg); }
+  to {
+    transform: rotate(360deg); } }
+
+.ff-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: background-color 0.3s; }
+
+.ff-busy-box {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  background: #2e2e2e;
+  border-radius: 5px; }
+  .ff-busy-box .ff-wheel {
+    font-size: 50px;
+    animation: spin 2s infinite linear; }
+  .ff-busy-box .ff-text {
+    font-size: 1.3em;
+    padding: 20px 0 0 0; }
+
+.ff-badge {
+  margin: 0 .1em;
+  padding: 0 .4em;
+  border-radius: .4em;
+  background-color: #01579B; }
+  .ff-badge.ff-info {
+    background-color: #2E7D32; }
+  .ff-badge.ff-warning {
+    background-color: #c35200; }
+  .ff-badge.ff-error {
+    background-color: #c62828; }
+
+.ff-control {
+  display: inline-block; }
+
+.ff-button {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 1px 8px;
+  background-color: #5c5c5c;
+  transition: background-color 0.12s;
+  text-align: center; }
+  .ff-button * {
+    pointer-events: none;
+    user-select: none; }
+  .ff-button:not(.ff-disabled):hover {
+    background-color: #6b6b6b; }
+  .ff-button.ff-disabled {
+    color: #808080; }
+
+.ff-checkbox {
+  display: inline-block;
+  margin-left: 0.5em;
+  margin-right: 0.5em; }
+  .ff-checkbox .ff-frame {
+    border-color: #a0a0a0; }
+    .ff-checkbox .ff-frame.ff-selected {
+      background-color: #224b73; }
+  .ff-checkbox .ff-mark {
+    border-color: #c8c8c8; }
+
+.ff-dropdown {
+  position: relative;
+  flex-shrink: 0;
+  background-color: #5c5c5c;
+  transition: background-color 0.12s; }
+  .ff-dropdown:hover {
+    background-color: #6b6b6b; }
+  .ff-dropdown select {
+    position: relative;
+    box-sizing: border-box;
+    padding: 1px 24px 1px 8px;
+    background-color: transparent;
+    border: none;
+    -moz-appearance: none;
+    -webkit-appearance: none; }
+    .ff-dropdown select::-ms-expand {
+      display: none; }
+    .ff-dropdown select optgroup, .ff-dropdown select option {
+      background-color: #424242; }
+  .ff-dropdown:after {
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+    top: 0.7em;
+    right: 8px;
+    content: "";
+    border-left: 0.35em solid transparent;
+    border-right: 0.35em solid transparent;
+    border-top: 0.4em solid; }
+
+.ff-line-edit, .ff-text-edit {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 0.1em;
+  border: none;
+  outline: none;
+  font: inherit; }
+
+.ff-text-edit {
+  resize: none; }
+
+.ff-dock-view {
+  position: relative; }
+
+.ff-tab-container, .ff-dock-tab-container {
+  border: 1px solid #191919; }
+  .ff-tab-container > .ff-tab-header-container, .ff-dock-tab-container > .ff-tab-header-container {
+    background: #191919; }
+  .ff-tab-container .ff-tab-header-item, .ff-dock-tab-container .ff-tab-header-item {
+    padding: 3px 3px;
+    background: #191919;
+    color: #808080; }
+    .ff-tab-container .ff-tab-header-item:hover, .ff-dock-tab-container .ff-tab-header-item:hover {
+      color: #c8c8c8; }
+    .ff-tab-container .ff-tab-header-item.ff-active, .ff-dock-tab-container .ff-tab-header-item.ff-active {
+      background: linear-gradient(#424242, #2e2e2e);
+      color: #c8c8c8; }
+    .ff-tab-container .ff-tab-header-item .ff-content + .ff-content, .ff-dock-tab-container .ff-tab-header-item .ff-content + .ff-content {
+      margin-left: 3px; }
+    .ff-tab-container .ff-tab-header-item .ff-text, .ff-tab-container .ff-tab-header-item .ff-icon, .ff-tab-container .ff-tab-header-item .ff-button, .ff-dock-tab-container .ff-tab-header-item .ff-text, .ff-dock-tab-container .ff-tab-header-item .ff-icon, .ff-dock-tab-container .ff-tab-header-item .ff-button {
+      padding: 0 2px; }
+    .ff-tab-container .ff-tab-header-item .ff-button, .ff-dock-tab-container .ff-tab-header-item .ff-button {
+      background: transparent;
+      color: #a0a0a0;
+      font-size: 0.85em;
+      cursor: pointer; }
+      .ff-tab-container .ff-tab-header-item .ff-button:not(.ff-disabled):hover, .ff-dock-tab-container .ff-tab-header-item .ff-button:not(.ff-disabled):hover {
+        color: #c8c8c8; }
+      .ff-tab-container .ff-tab-header-item .ff-button.ff-disabled, .ff-dock-tab-container .ff-tab-header-item .ff-button.ff-disabled {
+        color: #606060; }
+
+.ff-dock-tab-container {
+  border: 1px solid #191919; }
+
+.ff-dock-sprite {
+  box-sizing: border-box;
+  background: rgba(48, 63, 159, 0.5);
+  border: 1px solid #5161ca; }
+
+.ff-dial .ff-wheel {
+  background-color: #5c5c5c;
+  color: #224b73; }
+
+.ff-property-field {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: #424242;
+  cursor: pointer; }
+  .ff-property-field .ff-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: #5c5c5c;
+    transition: background-color 0.12s; }
+  .ff-property-field:hover > .ff-bar, .ff-property-field.ff-dragging > .ff-bar {
+    background-color: #6b6b6b; }
+  .ff-property-field .ff-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 1px; }
+  .ff-property-field .ff-align-right {
+    text-align: right; }
+  .ff-property-field input {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 0 2px;
+    border: none;
+    background: #424242;
+    color: #c8c8c8; }
+
+.ff-canvas-3d {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0; }
+
+html {
+  font-family: "Segoe UI", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  color: #c8c8c8;
+  line-height: 1.3;
+  font-size: 0.9rem; }
+
+.sc-scroll-wrapper {
+  overflow-y: auto; }
+
+.ff-line-edit {
+  tab-index: 0;
+  background: #424242;
+  color: #c8c8c8;
+  height: 20px; }
+
+.sc-overlay-buttons {
+  position: absolute;
+  right: 14px;
+  bottom: 12px; }
+  .sc-overlay-buttons .ff-button {
+    display: inline-block;
+    width: 44px;
+    height: 44px;
+    margin: 4px;
+    padding: 5px 0;
+    border-radius: 44px;
+    font-size: 25px; }
+
+.sc-table {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 0.9em; }
+  .sc-table tr:nth-child(2n+1) {
+    background: #292929; }
+  .sc-table .sc-tr.sc-selectable {
+    cursor: pointer; }
+  .sc-table .sc-tr.sc-selected {
+    background: #224b73; }
+  .sc-table th {
+    padding: 2px 4px;
+    border-bottom: 1px solid #424242;
+    background: #2e2e2e;
+    text-align: left;
+    cursor: pointer;
+    color: #a0a0a0; }
+  .sc-table td {
+    padding: 5px 4px; }
+  .sc-table .reactable-no-data {
+    background: transparent !important;
+    text-align: center; }
+
+.sc-title-bar {
+  height: 50px;
+  padding: 10px 4px;
+  border-bottom: 1px solid #191919;
+  background: #2e2e2e; }
+  .sc-title-bar .sc-logo {
+    height: 32px;
+    margin: 0 24px 0 4px; }
+  .sc-title-bar .sc-byline {
+    font-size: 0.9em;
+    color: #808080; }
+  .sc-title-bar .ff-control {
+    margin: 0 4px; }
+  .sc-title-bar .ff-line-edit {
+    max-width: 350px; }
+
+.ff-dock-view {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #2e2e2e; }
+
+.sc-json-document-view {
+  font-family: "Consolas", "Source Code Pro", monospace;
+  font-size: 0.95em; }
+  .sc-json-document-view ul {
+    margin: 0 4px !important; }
+
+.sc-job-list-view .sc-table .ff-button {
+  margin: 0 0 0 4px;
+  background: transparent;
+  font-size: 1.1em;
+  color: #a0a0a0; }
+  .sc-job-list-view .sc-table .ff-button:hover {
+    color: #c8c8c8; }
+  .sc-job-list-view .sc-table .ff-button.ff-disabled {
+    color: #606060; }
+
+.sc-create-job-view .sc-header {
+  padding: 2px 4px 12px 4px;
+  border-bottom: 1px solid #424242;
+  background: #2e2e2e; }
+  .sc-create-job-view .sc-header .ff-control {
+    margin: 5px 0; }
+  .sc-create-job-view .sc-header .ff-line-edit {
+    margin: 0 12px 0 6px; }
+  .sc-create-job-view .sc-header .ff-button {
+    background: transparent;
+    font-size: 1.5em;
+    color: #a0a0a0; }
+    .sc-create-job-view .sc-header .ff-button:hover {
+      color: #c8c8c8; }
+    .sc-create-job-view .sc-header .ff-button.ff-disabled {
+      color: #606060; }
+
+.sc-create-job-view .sc-parameters .sc-name {
+  width: 20%;
+  text-align: right; }
+
+.sc-create-job-view .sc-parameters .sc-input {
+  width: 45%; }
+
+.sc-create-job-view .sc-parameters .sc-default {
+  width: 35%; }
+
+.sc-create-job-view .sc-parameters .ff-file-drop-target .ff-line-edit {
+  box-sizing: border-box;
+  background: #5c445c; }
+
+.sc-create-job-view .sc-parameters .ff-file-drop-target.ff-targeted .ff-line-edit {
+  background: #846b84;
+  border: 1px dashed #c8c8c8; }
+
+.sc-create-job-view .sc-parameters .ff-badge {
+  margin-right: 6px; }
+  .sc-create-job-view .sc-parameters .ff-badge.ff-file {
+    background: #992e99; }
+
+.sc-create-job-view .sc-parameters .sc-default-value {
+  font-style: italic; }
+
+.sc-log-view {
+  font-family: "Consolas", "Source Code Pro", monospace;
+  font-size: 0.95em; }
+  .sc-log-view .sc-entry {
+    margin: 1px 0; }
+    .sc-log-view .sc-entry:nth-child(2n+1) {
+      background: #292929; }
+    .sc-log-view .sc-entry .sc-level, .sc-log-view .sc-entry .sc-sender {
+      color: #c8b18c; }
+
+
+/*# sourceMappingURL=main.css.map*/

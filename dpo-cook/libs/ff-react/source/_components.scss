@@ -1,0 +1,408 @@
+/**
+ * FF Typescript Foundation Library
+ * Copyright 2018 Ralph Wiedemeier, Frame Factory GmbH
+ *
+ * License: MIT
+ */
+
+////////////////////////////////////////////////////////////////////////////////
+// COLORS
+
+$color-background: #424242 !default;
+$color-background-darker: darken($color-background, 16%) !default;
+$color-background-dark: darken($color-background, 8%) !default;
+$color-background-light: lighten($color-background, 10%) !default;
+$color-background-lighter: lighten($color-background, 16%) !default;
+$color-background-hover: $color-background-lighter !default;
+
+$color-primary: #e64a19 !default; // deep orange
+$color-primary-light: lighten($color-primary, 15%) !default;
+$color-primary-dark: darken($color-primary, 15%) !default;
+
+$color-secondary: #303f9f !default; // indigo
+$color-secondary-light: lighten($color-secondary, 15%) !default;
+$color-secondary-dark: darken($color-secondary, 15%) !default;
+
+$color-text: #c8c8c8 !default;
+$color-text-disabled: #808080 !default;
+$color-icon: #a0a0a0 !default;
+$color-icon-disabled: #606060 !default;
+
+$color-focus: $color-secondary-light;
+
+////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+
+@mixin full-size {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.ff-fullsize {
+  @include full-size;
+}
+
+@mixin focus-frame {
+  &:focus {
+    outline: 1px solid $color-focus;;
+    outline-offset: 0;
+  }
+}
+
+@keyframes spin {
+  from {transform:rotate(0deg);}
+  to {transform:rotate(360deg);}
+}
+
+// short hover animation
+$tx-short: 0.12s;
+// medium transition
+$tx-medium: 0.3s;
+
+@mixin triangle($color, $size, $angle) {
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0.6em;
+    left: 3px;
+    width: 0;
+    height: 0;
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+    border-bottom: $size solid $color;
+    transform: rotate($angle);
+  }
+}
+
+@mixin dot($color, $size: 4px, $left: 5px, $top: 0.6em) {
+  &:before {
+    content: '';
+    position: absolute;
+    top: $top;
+    left: $left;
+    width: $size;
+    height: $size;
+    border: none;
+    background: $color;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// OVERLAY
+
+.ff-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: background-color $tx-medium;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// BUSYBOX
+
+.ff-busy-box {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  background: $color-background-dark;
+  border-radius: 5px;
+
+  .ff-wheel {
+    font-size: 50px;
+    animation: spin 2s infinite linear;
+  }
+  .ff-text {
+    font-size: 1.3em;
+    padding: 20px 0 0 0;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// BADGE
+
+.ff-badge {
+  margin: 0 .1em;
+  padding: 0 .4em;
+  border-radius: .4em;
+  background-color: #01579B;
+
+  &.ff-info {
+    background-color: #2E7D32;
+  }
+  &.ff-warning {
+    background-color: #c35200;
+  }
+  &.ff-error {
+    background-color: #c62828;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// CONTROL
+
+.ff-control {
+  display: inline-block;
+  //@include focus-frame;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// BUTTON
+
+.ff-button {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 1px 8px;
+  background-color: $color-background-light;
+  transition: background-color $tx-short;
+  text-align: center;
+
+  & * {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &:not(.ff-disabled):hover {
+    background-color: $color-background-hover;
+  }
+  &.ff-disabled {
+    color: $color-text-disabled;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// CHECKBOX
+
+.ff-checkbox {
+  display: inline-block;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+
+  .ff-frame {
+    border-color: $color-icon;
+
+    &.ff-selected {
+      background-color: $color-primary;
+    }
+  }
+
+  .ff-mark {
+    border-color: $color-text;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// DROPDOWN
+
+.ff-dropdown {
+  position: relative;
+  flex-shrink: 0;
+  background-color: $color-background-light;
+  transition: background-color $tx-short;
+
+  &:hover {
+    background-color: $color-background-hover;
+  }
+
+  select {
+    position: relative;
+    box-sizing: border-box;
+    padding: 1px 24px 1px 8px;
+    background-color: transparent;
+    border: none;
+
+    // hide triangle
+    -moz-appearance: none;
+    -webkit-appearance: none;
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    optgroup, option {
+      background-color: $color-background;
+    }
+
+    //&:focus {
+    //  outline: $focus-outline;
+    //  outline-offset: $focus-outline-offset;
+    //}
+  }
+
+  // custom triangle
+  &:after {
+    pointer-events: none;
+    user-select: none;
+    position: absolute;
+    top: 0.7em;
+    right: 8px;
+    content: "";
+    border-left: 0.35em solid transparent;
+    border-right: 0.35em solid transparent;
+    border-top: 0.4em solid;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// LINE-EDIT, TEXT-EDIT
+
+.ff-line-edit, .ff-text-edit {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 0.1em;
+  border: none;
+  outline: none;
+  font: inherit;
+}
+
+.ff-text-edit {
+  resize: none;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// SPLITTER
+
+.ff-splitter-handle {
+  &:active {
+    //background: $color-primary;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TREE
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// TAB-CONTAINER COMPONENTS, DOCK COMPONENTS
+
+.ff-dock-view {
+  position: relative;
+}
+
+.ff-tab-container, .ff-dock-tab-container {
+  border: 1px solid $color-background-darker;
+
+  & > .ff-tab-header-container {
+    background: $color-background-darker;
+  }
+
+  .ff-tab-header-item {
+    padding: 3px 3px;
+    background: $color-background-darker;
+    color: $color-text-disabled;
+
+    &:hover {
+      color: $color-text;
+    }
+
+    &.ff-active {
+      background: linear-gradient($color-background, $color-background-dark);
+      color: $color-text;
+    }
+
+    .ff-content + .ff-content {
+      margin-left: 3px;
+    }
+
+    .ff-text, .ff-icon, .ff-button {
+      padding: 0 2px;
+    }
+
+    .ff-button {
+      background: transparent;
+      color: $color-icon;
+      font-size: 0.85em;
+      cursor: pointer;
+
+      &:not(.ff-disabled):hover {
+        color: $color-text;
+      }
+
+      &.ff-disabled {
+        color: $color-icon-disabled;
+      }
+    }
+  }
+}
+
+.ff-dock-tab-container {
+  border: 1px solid $color-background-darker;
+}
+
+.ff-dock-sprite {
+  box-sizing: border-box;
+  background: rgba($color-secondary, 0.5);
+  border: 1px solid $color-secondary-light;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// DIAL
+
+.ff-dial {
+  .ff-wheel {
+    background-color: $color-background-light;
+    color: $color-primary;
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// PROPERTY FIELD
+
+.ff-property-field {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: $color-background;
+  cursor: pointer;
+
+  .ff-bar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: $color-background-light;
+    transition: background-color $tx-short;
+  }
+
+  &:hover > .ff-bar, &.ff-dragging > .ff-bar {
+    background-color: $color-background-hover;
+  }
+
+  .ff-text {
+    @include full-size;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0 1px;
+  }
+
+  .ff-align-right {
+    text-align: right;
+  }
+
+  input {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 0 2px;
+    border: none;
+    background: $color-background;
+    color: $color-text;
+
+    //&:focus {
+    //  outline: $focus-outline;
+    //  outline-offset: $focus-outline-offset;
+    //}
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// CANVAS 3D
+
+.ff-canvas-3d {
+  @include full-size;
+}

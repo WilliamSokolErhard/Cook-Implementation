@@ -1,0 +1,88 @@
+{
+    "id": "711d1d55-f318-4723-93d9-e30166c8c0bb",
+    "name": "remesh",
+    "description": "Samples the existing mesh and generates a new quad mesh",
+    "version": "2",
+    "start": "pickup",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "inputMeshFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "outputMeshFile": {
+                "type": "string",
+                "minLength": 1
+            },
+            "baseName": {
+                "type": "string",
+                "minLength": 1
+            },
+            "numFaces": {
+                "type": "integer",
+                "minimum": 10000,
+                "multipleOf": 1000,
+                "default": 250000
+            },
+            "quadsOnly": {
+                "type": "boolean",
+                "default": false
+            }
+        },
+        "required": [
+            "inputMeshFile"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "pickup": {
+            "task": "Pickup",
+            "description": "Fetch input files from client",
+            "pre": {
+                "baseName": "$baseName($firstTrue(baseName, inputMeshFile))",
+                "baseMeshName": "$baseMeshName($firstTrue(baseName, inputMeshFile), numFaces)"
+            },
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(pickupPath, $currentDir)",
+                "files": {
+                    "inputMeshFile": "inputMeshFile"
+                }
+            },
+            "success": "'remesh'",
+            "failure": "$failure"
+        },
+        "remesh": {
+            "task": "Remesh",
+            "description": "Generate a new quad-based mesh",
+            "pre": {
+                "deliverables": {
+                    "remeshedMeshFile": "$firstTrue(outputMeshFile, baseMeshName & '-remeshed.obj')"
+                }
+            },
+            "parameters": {
+                "inputMeshFile": "inputMeshFile",
+                "outputMeshFile": "deliverables.remeshedMeshFile",
+                "numFaces": "numFaces",
+                "quadsOnly": "quadsOnly"
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(deliveryPath, pickupPath, $currentDir)",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}

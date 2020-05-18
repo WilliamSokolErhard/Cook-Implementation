@@ -1,0 +1,20 @@
+{
+  "Meshlab": {
+    "executable": "J:\\meshlab_windows_portable\\meshlabserver.exe",
+    "version": "v2019.5, 2019-05-02",
+    "maxInstances": 3,
+    "timeout": 1800 // 30 minutes
+  },
+  "RizomUV": {
+    "executable": "J:\\RizomUV 2020\\rizomuv.exe",
+    "version": "RizomUV_VSRS.2020.0.89.gadc9742",
+    "maxInstances": 2,
+    "timeout": 1800 // 30 minutes
+  },
+  "Blender": {
+	"executable": "C:\\Program Files\\Blender Foundation\\Blender 2.82\\Blender.exe",
+	"version": "2.82",
+	"maxInstances": 1,
+	"timeout": 3600 // 1 hour
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "FBX2glTF": {
+    "executable": "C:\\Tools\\FBX2glTF.exe",
+    "version": "2.0",
+    "maxInstances": 1,
+    "timeout": 60 // 1 minute
+  },
+  "ImageMagick": {
+    "executable": "C:\\Program Files\\ImageMagick-7.0.7-Q16\\magick.exe",
+    "version": "7.0.7",
+    "maxInstances": 1,
+    "timeout": 600 // 10 minutes
+  },
+  "InstantMeshes": {
+    "executable": "C:\\Tools\\Instant Meshes.exe",
+    "version": "",
+    "maxInstances": 1,
+    "timeout": 900 // 15 minutes
+  },
+  "MeshSmith": {
+    "executable": "C:\\Tools\\MeshSmith\\MeshSmith.exe",
+    "version": "v0.6.4, 2019-05-04",
+    "maxInstances": 3,
+    "timeout": 600 // 10 minutes
+  },
+  "Meshfix": {
+    "executable": "C:\\Tools\\MeshFix.exe",
+    "version": "v2.1",
+    "maxInstances": 1,
+    "timeout": 600 // 10 minutes
+  },
+  "Meshlab": {
+    "executable": "C:\\Tools\\MeshlabMini\\meshlabserver.exe",
+    "version": "v2019.5, 2019-05-02",
+    "maxInstances": 3,
+    "timeout": 1800 // 30 minutes
+  },
+  "RapidCompact": {
+    "executable": "C:\\Program Files\\RapidCompact CLI 1.6.0\\rpdx.exe",
+    "version": "1.6",
+    "maxInstances": 3,
+    "timeout": 900 // 15 minutes
+  },
+  "RealityCapture": {
+    "executable": "C:\\Program Files\\Capturing Reality\\RealityCapture\\RealityCapture.exe",
+    "version": "1.0.3.4658",
+    "maxInstances": 1,
+    "timeout": 0 // never
+  },
+  "RizomUV": {
+    "executable": "C:\\Program Files\\Rizom Lab\\RizomUV VS RS 2018.0\\rizomuv.exe",
+    "version": "RizomUV_VSRS.2018.0.85.g41754c4.master",
+    "maxInstances": 2,
+    "timeout": 1800 // 30 minutes
+  },
+  "XNormal": {
+    "executable": "C:\\Program Files\\xNormal\\3.19.3\\x64\\xNormal.exe",
+    "version": "3.19.3.39669",
+    "maxInstances": 1,
+    "timeout": 2700 // 45 minutes
+  }
+}

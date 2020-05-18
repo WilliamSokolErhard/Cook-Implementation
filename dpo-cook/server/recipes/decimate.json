@@ -1,0 +1,150 @@
+{
+    "id": "7ce5c5b1-00d2-4d7f-bebc-ea99ae5f6640",
+    "name": "decimate",
+    "description": "Decimate high poly mesh",
+    "version": "4",
+    "start": "pickup",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "highPolyMeshFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "baseName": {
+                "type": "string",
+                "minLength": 1
+            },
+            "numFaces": {
+                "type": "integer",
+                "minimum": 100,
+                "default": 250000
+            },
+            "cleanupMesh": {
+                "type": "boolean",
+                "default": false
+            },
+            "preserveTopology": {
+                "type": "boolean",
+                "default": true
+            },
+            "preserveBoundaries": {
+                "type": "boolean",
+                "default": true
+            },
+            "preserveTexCoords": {
+                "type": "boolean",
+                "default": false
+            },
+            "computeVertexNormals": {
+                "type": "boolean",
+                "default": true
+            },
+            "inspectMesh": {
+                "type": "boolean",
+                "default": false
+            },
+            "tool": {
+                "type": "string",
+                "enum": [
+                    "Meshlab",
+                    "RapidCompact"
+                ],
+                "default": "RapidCompact"
+            }
+        },
+        "required": [
+            "highPolyMeshFile",
+            "numFaces"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "pickup": {
+            "task": "Pickup",
+            "description": "Fetch input files from client",
+            "pre": {
+                "baseName": "$baseName($firstTrue(baseName, highPolyMeshFile))",
+                "baseMeshName": "$baseMeshName($firstTrue(baseName, highPolyMeshFile), numFaces)"
+            },
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(pickupPath, $currentDir)",
+                "files": {
+                    "highPolyMeshFile": "highPolyMeshFile"
+                }
+            },
+            "success": "'inspect-highpoly'",
+            "failure": "$failure"
+        },
+        "inspect-highpoly": {
+            "task": "InspectMesh",
+            "description": "Inspect high poly mesh using Meshlab",
+            "skip": "$not(inspectMesh)",
+            "pre": {
+                "deliverables": {
+                    "highPolyReportFile": "baseName & '-highpoly-inspection.json'"
+                }
+            },
+            "parameters": {
+                "meshFile": "highPolyMeshFile",
+                "reportFile": "deliverables.highPolyReportFile"
+            },
+            "success": "'decimate'",
+            "failure": "$failure"
+        },
+        "decimate": {
+            "task": "DecimateMesh",
+            "description": "Decimate high poly mesh",
+            "pre": {
+                "deliverables": {
+                    "decimatedMeshFile": "baseMeshName & '-decimated-' & $lowercase(tool) & '.obj'"
+                }
+            },
+            "parameters": {
+                "inputMeshFile": "highPolyMeshFile",
+                "outputMeshFile": "deliverables.decimatedMeshFile",
+                "numFaces": "numFaces",
+                "cleanup": "cleanupMesh",
+                "preserveTopology": "preserveTopology",
+                "preserveBoundaries": "preserveBoundaries",
+                "preserveTexCoords": "preserveTexCoords",
+                "computeVertexNormals": "computeVertexNormals",
+                "tool": "tool",
+                "timeout": 1200
+            },
+            "success": "inspectMesh ? 'inspect-decimated' : 'delivery'",
+            "failure": "$failure"
+        },
+        "inspect-decimated": {
+            "task": "InspectMesh",
+            "description": "Inspect decimated mesh using Meshlab",
+            "skip": "$not(inspectMesh)",
+            "pre": {
+                "deliverables": {
+                    "decimatedReportFile": "baseMeshName & '-decimated-inspection.json'"
+                }
+            },
+            "parameters": {
+                "meshFile": "deliverables.decimatedMeshFile",
+                "reportFile": "deliverables.decimatedReportFile"
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "parameters": {
+                "method": "transportMethod",
+                "path": "$firstTrue(deliveryPath, pickupPath, $currentDir)",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}

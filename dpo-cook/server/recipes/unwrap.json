@@ -1,0 +1,97 @@
+{
+    "id": "967ed977-055e-41c8-a836-b1372be3b3ca",
+    "name": "unwrap",
+    "description": "Unwrap decimated mesh using RizomUV",
+    "version": "3",
+    "start": "unwrap",
+
+    "parameterSchema": {
+        "type": "object",
+        "properties": {
+            "decimatedMeshFile": {
+                "type": "string",
+                "minLength": 1,
+                "format": "file"
+            },
+            "baseName": {
+                "type": "string",
+                "minLength": 1
+            },
+            "mapSize": {
+                "type": "integer",
+                "minimum": 128,
+                "maximum": 8192,
+                "default": 4096
+            },
+            "segmentationStrength": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.6
+            },
+            "packEffort": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "default": 0.7
+            },
+            "cutHandles": {
+                "type": "boolean",
+                "default": true
+            },
+            "tool": {
+                "type": "string",
+                "enum": [
+                    "RizomUV",
+                    "Unknit",
+                    "RapidCompact"
+                ],
+                "default": "RizomUV"
+            }
+        },
+        "required": [
+            "decimatedMeshFile",
+            "mapSize"
+        ],
+        "additionalProperties": false
+    },
+
+    "steps": {
+        "unwrap": {
+            "task": "UnwrapMesh",
+            "description": "Unwrap mesh using RizomUV",
+            "pre": {
+                "baseName": "$baseName($firstTrue(baseName, decimatedMeshFile))",
+                "deliverables": {
+                    "unwrappedMeshObjFile": "baseName & '-unwrapped-' & $lowercase(tool) & '.obj'",
+                    "unwrappedMeshFbxFile": "tool = 'RizomUV' ? baseName & '-unwrapped-' & $lowercase(tool) & '.fbx' : ''"
+                }
+            },
+            "parameters": {
+                "inputMeshFile": "decimatedMeshFile",
+                "outputMeshFile": "deliverables.unwrappedMeshObjFile",
+                "saveFbx": true,
+                "saveObj": true,
+                "mapSize": "mapSize",
+                "segmentationStrength": "segmentationStrength",
+                "packEffort": "packEffort",
+                "cutHandles": "cutHandles",
+                "timeout": 1800,
+                "tool": "tool"
+            },
+            "success": "'delivery'",
+            "failure": "$failure"
+        },
+        "delivery": {
+            "task": "Delivery",
+            "description": "Send result files back to client",
+            "parameters": {
+                "method": "none",
+                "path": "$currentDir",
+                "files": "deliverables"
+            },
+            "success": "$success",
+            "failure": "$failure"
+        }
+    }
+}
